@@ -1,20 +1,25 @@
 import React from 'react'
 import * as BooksAPI from './BooksAPI'
 import { Link } from 'react-router-dom'
+import { PropTypes } from 'prop-types'
 
 
 class BookShelf extends React.Component {
-   
+    static propTypes = {
+        books: PropTypes.array.isRequired,
+        title: PropTypes.string.isRequired,
+        heading: PropTypes.string.isRequired,
+        onShelfChange: PropTypes.func.isRequired,
+    }
     render() {
-        const {title, books} = this.props;
-        // console.log(books);
+        const {title, books, heading, onShelfChange} = this.props;
         const shelfBooks = books.filter((book) => book.shelf == title);
         return (
             <div className="bookshelf">
-                <h2 className="bookshelf-title">{title}</h2>
+                <h2 className="bookshelf-title">{heading}</h2>
                 <div className="bookshelf-books">
                     <ol className="books-grid">
-                      {shelfBooks.map(book => <Book data={book} key={book.id} onBookShelfChange={this.props.onShelfChange}/>)}
+                      {shelfBooks.map(book => <Book data={book} key={book.id} onBookShelfChange={onShelfChange}/>)}
                     </ol>
                 </div>
             </div>
@@ -23,15 +28,19 @@ class BookShelf extends React.Component {
 }
 
 class Book extends React.Component {
+    static propTypes = {
+        data: PropTypes.object.isRequired,
+        onBookShelfChange: PropTypes.func.isRequired,
+    }
     render() {
-        const { data } = this.props;
+        const { data, onBookShelfChange } = this.props;
         let styleObject = { width: 128, height: 193, backgroundImage: `url(${data.imageLinks.thumbnail})` };
 
         return (
             <div className="book">
                 <div className="book-top">
                     <div className="book-cover" style={styleObject}></div>
-                    <ShelfChanger book={data} shelfChange={this.props.onBookShelfChange}/>
+                    <ShelfChanger book={data} shelfChange={onBookShelfChange}/>
                 </div>
                 <div className="book-title">{data.title}</div>
                 <div className="book-authors">{data.authors}</div>
@@ -41,6 +50,11 @@ class Book extends React.Component {
 }
 
 class ShelfChanger extends React.Component {
+    static propTypes = {
+        book: PropTypes.object.isRequired,
+        shelfChange: PropTypes.func.isRequired,
+    }
+    
     state = {
         value: ' '
     }
@@ -79,9 +93,13 @@ class ShelfChanger extends React.Component {
 
 class SearchPage extends React.Component {
 
+    static propTypes = {
+        onShelfChange: PropTypes.func.isRequired,
+    }
+
     state = {
         value: ' ',
-        result: []
+        result: [ ]
     }
     handleChange = (e) => {
         this.setState({
@@ -93,8 +111,8 @@ class SearchPage extends React.Component {
         })
     }
     render() {
-        // console.log(BooksAPI);
-        const {result} = this.state
+        let {result} = this.state;
+        result = (result)? result: [];
         return (
             <div className="search-books">
                 <div className="search-books-bar">

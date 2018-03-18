@@ -28,7 +28,6 @@ class BooksApp extends React.Component {
   }
 
   render() {
-    console.log(BooksAPI);
     const {books} = this.state;
     return (
       <div className="app">
@@ -42,9 +41,9 @@ class BooksApp extends React.Component {
             </div>
             <div className="list-books-content">
               <div>
-                  <BookShelf books={books} title="currentlyReading" onShelfChange={this.handleBookUpdate}/>
-                  <BookShelf books={books} title="wantToRead" onShelfChange={this.handleBookUpdate}/>
-                  <BookShelf books={books} title="read" onShelfChange={this.handleBookUpdate}/>
+                <BookShelf books={books} heading="Currently Reading" title="currentlyReading" onShelfChange={this.handleBookUpdate}/>
+                <BookShelf books={books} heading="Want To Read" title="wantToRead" onShelfChange={this.handleBookUpdate}/>
+                <BookShelf books={books} heading="Read" title="read" onShelfChange={this.handleBookUpdate}/>
               </div>
             </div>
             <div className="open-search">
