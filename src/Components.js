@@ -1,12 +1,13 @@
 import React from 'react'
 import * as BooksAPI from './BooksAPI'
+import { Link } from 'react-router-dom'
 
 
 class BookShelf extends React.Component {
    
     render() {
         const {title, books} = this.props;
-        console.log(books);
+        // console.log(books);
         const shelfBooks = books.filter((book) => book.shelf == title);
         return (
             <div className="bookshelf">
@@ -43,7 +44,17 @@ class ShelfChanger extends React.Component {
     state = {
         value: ' '
     }
+    // set component state for book
+    componentDidMount() {
+        const {id} = this.props.book
+        return BooksAPI.get(id).then((data) => (
+            this.setState({
+                value: data.shelf
+            })
+        ))
+    }
 
+    // Pass select value up to update parent book collection
     handleChange = (e) => {
         const {book,shelfChange} = this.props;
         const newShelf = e.target.value;
@@ -51,10 +62,9 @@ class ShelfChanger extends React.Component {
     }
 
     render() {
-        console.log(this.state);
         return (
             <div className = "book-shelf-changer" >
-                <select onChange={this.handleChange}>
+                <select onChange={this.handleChange} value={this.state.value}>
                     <option value="none" disabled>Move to...</option>
                     <option value="currentlyReading">Currently Reading</option>
                     <option value="wantToRead">Want to Read</option>
@@ -66,4 +76,41 @@ class ShelfChanger extends React.Component {
     }
 }
 
-export { BookShelf }
+
+class SearchPage extends React.Component {
+
+    state = {
+        value: ' ',
+        result: []
+    }
+    handleChange = (e) => {
+        this.setState({
+            value: e.target.value
+        })
+
+        BooksAPI.search(this.state.value).then((data) =>{
+           return this.setState({ result: data}) 
+        })
+    }
+    render() {
+        // console.log(BooksAPI);
+        const {result} = this.state
+        return (
+            <div className="search-books">
+                <div className="search-books-bar">
+                    <Link to="/" className="close-search">Close</Link>
+                    <div className="search-books-input-wrapper">
+                        <input type="text" onChange={this.handleChange} placeholder="Search by title or author" />
+                    </div>
+                </div>
+                <div className="search-books-results">
+                    <ol className="books-grid">
+                        {result.map(book => <Book data={book} key={book.id} onBookShelfChange={this.props.onShelfChange} />)}
+                    </ol>
+                </div>
+            </div>
+        )
+    }
+}
+
+export { BookShelf, SearchPage }
