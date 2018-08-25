@@ -33,7 +33,7 @@ class SearchPage extends React.Component {
             query: e.target.value
         });
 
-        if(query === ' '){
+        if(query === ' '  || query.length <= 3 ){
             return result;
         }
         BooksAPI.search(query).then((data) => {
